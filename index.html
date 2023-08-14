@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Challenge Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('bg_sr.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: rgb(255, 255, 255);
+            text-align: center;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 10px 10px;
+            background-color: #6599e1;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .challenge-container {
+            
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .challenge-container h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
+
+        .challenge-details {
+            font-weight: bold;
+            color: rgb(5, 4, 4);
+        }
+    </style>
+    <script>
+        function generateChallenge() {
+            var goals = [
+                "速魔光铥头",
+                "速犀牛",
+                "速疯猪",
+                "速犀牛疯猪"
+            ];
+
+            var world_options = [
+                ["极短四季", "永春", "永冬"],
+                ["永夜", "永雨", "永夜永雨"],
+                ["疯狂影怪"],
+                ["极少资源"]
+            ];
+
+            var characters = {
+                "Easy": ["老麦", "奶奶", "大力士", "女武神"],
+                "Normal": ["威尔逊", "火女", "伍迪", "机器人", "薇诺娜", "温蒂", "厨师", "蜘蛛人", "鱼人", "小恶魔", "旺达", "植物人"],
+                "Hell": ["维斯", "沃尔特"]
+            };
+
+            var goal = goals[Math.floor(Math.random() * goals.length)];
+            var world_config = [];
+            while (world_config.length === 0) {
+                for (var i = 0; i < world_options.length; i++) {
+                    if (world_options[i].includes("极少资源")) {
+                        var option = "极少资源";
+                        world_config.push(option);
+                    } else if (Math.random() < 0.5) {
+                        var option = world_options[i][Math.floor(Math.random() * world_options[i].length)];
+                        world_config.push(option);
+                    }
+                }
+            }
+
+            var formatted_world_config = world_config.join("|");
+            var character_difficulty = Object.keys(characters)[Math.floor(Math.random() * Object.keys(characters).length)];
+            var character = characters[character_difficulty][Math.floor(Math.random() * characters[character_difficulty].length)];
+
+            document.getElementById("goal").innerText = goal;
+            document.getElementById("world_config").innerText = formatted_world_config;
+            document.getElementById("character").innerText = character;
+        }
+    </script>
+</head>
+<body>
+    <h1>饥荒挑战生成器</h1>
+    <div class="challenge-container">
+        <button onclick="generateChallenge()">生成一个挑战</button>
+        <div class="challenge-details">
+            <h3>挑战目标：<span id="goal"></span></h3>
+            <h3>世界配置：<span id="world_config"></span></h3>
+            <h3>角色：<span id="character"></span></h3>
+        </div>
+    </div>
+</body>
+</html>
