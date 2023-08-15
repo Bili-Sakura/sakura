@@ -17,23 +17,17 @@
             text-align: center;
         }
 
-        button {
-            font-size: 16px;
-            padding: 10px 10px;
-            background-color: #6599e1;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
         .challenge-container {
-            
             background-color: rgba(255, 255, 255, 0.5);
             border: 1px solid #ddd;
             border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
             padding: 20px;
+            flex-direction: row;
+            /* 将主轴方向设置为水平方向 */
         }
 
         .challenge-container h3 {
@@ -47,16 +41,74 @@
             font-weight: bold;
             color: rgb(5, 4, 4);
         }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 10px 10px;
+            background-color: #6599e1;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .column {
+            flex: 1;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            margin: 0 10px;
+            border-radius: 10px;
+            height: 200px;
+            /* Specify the desired height */
+            width: 300px;
+            /* Specify the desired width */
+        }
+
+        .container {
+            position: absolute;
+            bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.411);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: lightgray;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- <script type="text/javascript" src="seedrandom.js"></script> -->
+    <script>
+        // Save challenge result to local storage
+        var result = "Challenge Result";
+        localStorage.setItem("challengeResult", result);
+    </script>
     <script>
         function generateChallenge() {
-            var goals = [
-                "速魔光铥头",
-                "速犀牛",
-                "速疯猪",
-                "速犀牛疯猪"
-            ];
+            // Define the available goals
+            var goals = ["速魔光铥头", "速犀牛", "速疯猪", "速犀牛疯猪"];
 
+            // Define the available world options
             var world_options = [
                 ["极短四季", "永春", "永冬"],
                 ["永夜", "永雨", "永夜永雨"],
@@ -64,13 +116,17 @@
                 ["极少资源"]
             ];
 
+            // Define the available characters based on difficulty
             var characters = {
                 "Easy": ["老麦", "奶奶", "大力士", "女武神"],
                 "Normal": ["威尔逊", "火女", "伍迪", "机器人", "薇诺娜", "温蒂", "厨师", "蜘蛛人", "鱼人", "小恶魔", "旺达", "植物人"],
                 "Hell": ["维斯", "沃尔特"]
             };
 
+            // Generate a random goal
             var goal = goals[Math.floor(Math.random() * goals.length)];
+
+            // Generate a random world configuration
             var world_config = [];
             while (world_config.length === 0) {
                 for (var i = 0; i < world_options.length; i++) {
@@ -83,26 +139,209 @@
                     }
                 }
             }
-
             var formatted_world_config = world_config.join("|");
-            var character_difficulty = Object.keys(characters)[Math.floor(Math.random() * Object.keys(characters).length)];
-            var character = characters[character_difficulty][Math.floor(Math.random() * characters[character_difficulty].length)];
 
+            // Generate a random character based on difficulty
+            var character_difficulty = Object.keys(characters)[Math.floor(Math.random() * Object.keys(characters)
+                .length)];
+            var character = characters[character_difficulty][Math.floor(Math.random() * characters[character_difficulty]
+                .length)];
+
+            // Display the generated challenge
             document.getElementById("goal").innerText = goal;
             document.getElementById("world_config").innerText = formatted_world_config;
             document.getElementById("character").innerText = character;
+
+
+
         }
+    </script>
+
+    <script>
+        function generateDailyChallenge() {
+
+
+            var timestamp = new Date().toLocaleString();
+            var currentDate = new Date();
+
+            var seed = currentDate.getFullYear() + currentDate.getMonth() + currentDate.getDate();
+            var rng = new Math.seedrandom(seed);
+
+            var goal = goals[Math.floor(rng() * goals.length)];
+            var world_config = [];
+            while (world_config.length === 0) {
+                for (var i = 0; i < world_options.length; i++) {
+                    if (world_options[i].includes("极少资源")) {
+                        var option = "极少资源";
+                        world_config.push(option);
+                    } else if (rng() < 0.5) {
+                        var option = world_options[i][Math.floor(rng() * world_options[i].length)];
+                        world_config.push(option);
+                    }
+                }
+            }
+
+            var formatted_world_config = world_config.join("|");
+            var character_difficulty = Object.keys(characters)[Math.floor(rng() * Object.keys(characters).length)];
+            var character = characters[character_difficulty][Math.floor(rng() * characters[character_difficulty]
+                .length)];
+
+            document.getElementById("daily_goal").innerText = goal;
+            document.getElementById("daily_world_config").innerText = formatted_world_config;
+            document.getElementById("daily_character").innerText = character;
+            document.getElementById("timestamp").innerText = timestamp+"\n"+"#每日挑战项目由日期唯一确定";
+
+            //----------------------------------------------------------------
+            var dailyGoal = document.getElementById("daily_goal").innerText;
+            var dailyWorldConfig = document.getElementById("daily_world_config").innerText;
+            var dailyCharacter = document.getElementById("daily_character").innerText;
+            // var timestamp = document.getElementById("timestamp").innerText;
+
+            // Create an object for the new challenge record
+            var challengeRecord = {
+                dailyGoal,
+                dailyWorldConfig,
+                dailyCharacter,
+                timestamp
+            };
+
+            // Get today's date
+            var today = new Date().toISOString().split('T')[0]; // 获取当前日期，格式为 "YYYY-MM-DD"
+
+            // Check if the challengeData array exists in localStorage
+            var challengeData = [];
+            if (localStorage.getItem("challengeData")) {
+                challengeData = JSON.parse(localStorage.getItem("challengeData"));
+            }
+
+            // Check if a record already exists for today
+            var recordExistsForToday = challengeData.some(function (record) {
+                return record.timestamp.split('T')[0] === today; // 检查记录的日期是否与今天相同
+            });
+
+            if (!recordExistsForToday) {
+                // Append the new challenge record
+                challengeData.push(challengeRecord);
+
+                // Save the updated challengeData in localStorage
+                localStorage.setItem("challengeData", JSON.stringify(challengeData));
+                // Create a Blob from the challengeData as JSON
+                var blob = new Blob([JSON.stringify(challengeData)], {
+                    type: "application/json;charset=utf-8"
+                });
+
+                // Save the Blob as a file using FileSaver.js
+                // saveAs(blob, "challenge.json")
+
+                // Log success message
+                console.log("Challenge record saved for today:", today);
+            } else {
+                console.log("Challenge record already exists for today:", today);
+            }
+        }
+    </script>
+    <script>
+        var goals = [
+            "速魔光铥头",
+            "速犀牛",
+            "速疯猪",
+            "速犀牛疯猪"
+        ];
+
+        var world_options = [
+            ["极短四季", "永春", "永冬"],
+            ["永夜", "永雨", "永夜永雨"],
+            ["疯狂影怪"],
+            ["极少资源"]
+        ];
+
+        var characters = {
+            "Easy": ["老麦", "奶奶", "大力士", "女武神"],
+            "Normal": ["威尔逊", "火女", "伍迪", "机器人", "薇诺娜", "温蒂", "厨师", "蜘蛛人", "鱼人", "小恶魔", "旺达", "植物人"],
+            "Hell": ["维斯", "沃尔特"]
+        };
+
+        // 构建表格数据
+        var data = [
+            ["全部挑战目标"].concat(goals),
+            ["全部世界配置"].concat(world_options),
+            ["全部可选人物"].concat(Object.values(characters))
+        ];
     </script>
 </head>
 <body>
     <h1>饥荒挑战生成器</h1>
     <div class="challenge-container">
-        <button onclick="generateChallenge()">生成挑战test2</button>
-        <div class="challenge-details">
+        <div class="column">
+            <button onclick="generateChallenge()">生成随机挑战</button>
             <h3>挑战目标：<span id="goal"></span></h3>
             <h3>世界配置：<span id="world_config"></span></h3>
             <h3>角色：<span id="character"></span></h3>
+
+        </div>
+        <div class="column">
+            <button onclick="generateDailyChallenge()">生成每日挑战</button>
+            <h3>每日挑战目标：<span id="daily_goal"></span></h3>
+            <h3>每日世界配置：<span id="daily_world_config"></span></h3>
+            <h3>每日角色：<span id="daily_character"></span></h3>
+            <h3>今日挑战生成时间:<span id="timestamp"></span></h3>
+
         </div>
     </div>
+    <div class="container">
+        <table id="myTable">
+            <!-- 表格内容 -->
+        </table>
+    </div>
+    <script>
+        // 生成表格的函数
+        function generateTable(data) {
+            var table = document.createElement("table");
+            table.classList.add("my-table"); // 添加一个自定义的类名以应用更多样式（可选）
+
+            // 创建表头行
+            var headerRow = document.createElement("tr");
+            for (var i = 0; i < data.length; i++) {
+                var headerCell = document.createElement("th");
+                headerCell.textContent = data[i][0];
+                headerRow.appendChild(headerCell);
+            }
+            table.appendChild(headerRow);
+
+            // 计算数据行的最大数量
+            var maxRows = 0;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].length > maxRows) {
+                    maxRows = data[i].length;
+                }
+            }
+
+            // 创建数据行
+            for (var i = 1; i < maxRows; i++) {
+                var dataRow = document.createElement("tr");
+                for (var j = 0; j < data.length; j++) {
+                    if (data[j].length > i) {
+                        var dataCell = document.createElement("td");
+                        dataCell.textContent = data[j][i];
+                        dataRow.appendChild(dataCell);
+                    } else {
+                        var emptyCell = document.createElement("td");
+                        dataRow.appendChild(emptyCell);
+                    }
+                }
+                table.appendChild(dataRow);
+            }
+
+            return table;
+        }
+
+        window.onload = function () {
+
+
+            var table = generateTable(data);
+            var container = document.querySelector(".container");
+      container.appendChild(table);
+        }
+    </script>
 </body>
 </html>
